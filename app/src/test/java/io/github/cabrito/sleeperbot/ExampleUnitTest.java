@@ -1,4 +1,4 @@
-package io.github.scalrx.sleeperbot;
+package io.github.cabrito.sleeperbot;
 
 import org.junit.Test;
 

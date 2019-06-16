@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@android:color/holo_blue_dark"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -13,24 +14,24 @@
 
         <!-- Alarm Title -->
         <TextView
-            android:id="@+id/text_view_activity_alarms_alarmtitle"
+            android:id="@+id/textview_activity_alarms_alarmtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="16dp"
-            android:text="Alarm Title"
+            tools:text="Alarm Title"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent" />
 
         <!-- Alarm Time -->
         <TextView
-            android:id="@+id/text_view_activity_alarms_alarmtime"
+            android:id="@+id/textview_activity_alarms_alarmtime"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="04:20"
             android:textSize="32sp"
-            app:layout_constraintStart_toStartOf="@id/text_view_activity_alarms_alarmtitle"
-            app:layout_constraintTop_toBottomOf="@id/text_view_activity_alarms_alarmtitle" />
+            tools:text="04:20"
+            app:layout_constraintStart_toStartOf="@id/textview_activity_alarms_alarmtitle"
+            app:layout_constraintTop_toBottomOf="@id/textview_activity_alarms_alarmtitle" />
 
         <!-- Alarm Days -->
         <LinearLayout
@@ -39,63 +40,15 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingBottom="16dp"
-            app:layout_constraintTop_toBottomOf="@id/text_view_activity_alarms_alarmtime"
-            app:layout_constraintStart_toStartOf="@id/text_view_activity_alarms_alarmtime">
+            app:layout_constraintTop_toBottomOf="@id/textview_activity_alarms_alarmtime"
+            app:layout_constraintStart_toStartOf="@id/textview_activity_alarms_alarmtime">
 
             <TextView
-                android:id="@+id/text_view_activity_alarms_sunday"
+                android:id="@+id/textview_activity_alarms_daysactivated"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="4dp"
-                android:text="@string/sunday_short" />
-
-            <TextView
-                android:id="@+id/text_view_activity_alarms_monday"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:text="@string/monday_short" />
-
-            <TextView
-                android:id="@+id/text_view_activity_alarms_tuesday"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:text="@string/tuesday_short" />
-
-            <TextView
-                android:id="@+id/text_view_activity_alarms_wednesday"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:text="@string/wednesday_short" />
-
-            <TextView
-                android:id="@+id/text_view_activity_alarms_thursday"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:text="@string/thursday_short" />
-
-            <TextView
-                android:id="@+id/text_view_activity_alarms_friday"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:text="@string/friday_short" />
-
-            <TextView
-                android:id="@+id/text_view_activity_alarms_saturday"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginRight="4dp"
-                android:text="@string/saturday_short" />
+                tools:text="Su Mo Tu We Th Fr Sa" />
 
         </LinearLayout>
 

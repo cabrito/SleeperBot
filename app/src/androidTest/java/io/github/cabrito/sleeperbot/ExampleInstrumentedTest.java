@@ -1,4 +1,4 @@
-package io.github.scalrx.sleeperbot;
+package io.github.cabrito.sleeperbot;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
