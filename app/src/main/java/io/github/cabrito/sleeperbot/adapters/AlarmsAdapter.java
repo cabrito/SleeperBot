@@ -83,7 +83,7 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.AlarmsView
             return "Weekends";
         else
         {
-            String[] daysOfWeek = new String[]{"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"};
+            String[] daysOfWeek = new String[]{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < daysOfWeek.length; i++)
             {
