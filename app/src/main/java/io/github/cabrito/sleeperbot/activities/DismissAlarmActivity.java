@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 
 import io.github.cabrito.sleeperbot.MainActivity;
@@ -22,6 +23,9 @@ public class DismissAlarmActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dismiss_alarm);
 
+        // Keeps the screen on to provide visual cue of alarm.
+        focusActivity();
+
         // Handles dismissal of the alarm when it fires and pushes this activity to the screen.
         Button dismissAlarmButton = (Button) findViewById(R.id.button_activity_dismiss_dismissalarm);
         dismissAlarmButton.setOnClickListener(new View.OnClickListener()
@@ -36,6 +40,17 @@ public class DismissAlarmActivity extends AppCompatActivity
                 finish();
             }
         });
+    }
+
+    /**
+     * Pushes alarm dismissal screen to the forefront of the user's attention.
+     */
+    private void focusActivity()
+    {
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
+                             WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD |
+                             WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED |
+                             WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
     }
 
     /**

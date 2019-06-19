@@ -16,7 +16,7 @@ public class AlarmReceiver extends BroadcastReceiver
     public void onReceive(Context context, Intent intent)
     {
         Intent dismissAlarmIntent = new Intent(context, DismissAlarmActivity.class);
-        dismissAlarmIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Necessary to launch activity.
+        dismissAlarmIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(dismissAlarmIntent);
     }
 }
