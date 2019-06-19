@@ -50,6 +50,9 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.AlarmsView
         return alarmsViewHolder;
     }
 
+    /**
+     * Sets all of the necessary fields on the Alarm in the Card for displaying to the user.
+     */
     @Override
     public void onBindViewHolder(@NonNull AlarmsViewHolder alarmsViewHolder, int position)
     {
@@ -66,6 +69,10 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.AlarmsView
         return alarmsList.size();
     }
 
+    /**
+     * Formats the time in the Alarm Card to be human-readable.
+     * @return String such as 17:30 or 8:50 AM, depending on user's locale.
+     */
     private String buildAlarmTime(Alarm alarm)
     {
         NumberFormat formatter = new DecimalFormat("00");
@@ -74,6 +81,10 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.AlarmsView
         return result;
     }
 
+    /**
+     * Provides concise, human-readable representation of the days of the week the alarm should fire.
+     * @return String with specific short day names, or "Weekdays"/"Weekends" if applicable.
+     */
     private String buildDaysActivated(Alarm alarm)
     {
         // Check to see if the alarm is weekdays only, weekends only, or variable

@@ -26,6 +26,7 @@ public class AlarmsActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarms);
 
+        // For dev-purposes, have the New Alarm button take the user to set an alarm
         Button newAlarmButton = findViewById(R.id.button_new_alarm);
         newAlarmButton.setOnClickListener(new View.OnClickListener()
         {
@@ -38,7 +39,6 @@ public class AlarmsActivity extends AppCompatActivity
         });
 
         ArrayList<Alarm> alarmsList = new ArrayList<>();
-
         alarmsRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_activity_alarms);
         alarmsRecyclerView.setHasFixedSize(true);   /* Resizing of list layout not expected, so this saves on performance */
 

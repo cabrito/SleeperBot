@@ -22,6 +22,7 @@ public class DismissAlarmActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dismiss_alarm);
 
+        // Handles dismissal of the alarm when it fires and pushes this activity to the screen.
         Button dismissAlarmButton = (Button) findViewById(R.id.button_activity_dismiss_dismissalarm);
         dismissAlarmButton.setOnClickListener(new View.OnClickListener()
         {
@@ -32,12 +33,17 @@ public class DismissAlarmActivity extends AppCompatActivity
                 // Return to the main activity
                 Intent mainActivityIntent = new Intent(getBaseContext(), AlarmsActivity.class);
                 startActivity(mainActivityIntent);
+                finish();
             }
         });
     }
 
+    /**
+     * Sends a message to the Android OS {@link AlarmManager} to cancel the specified alarm.
+     */
     private void cancelAlarm()
     {
+        // TODO: Are we sure that the alarm we cancel is ours?
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent dismissAlarmIntent = new Intent(this, AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, dismissAlarmIntent, 0);
