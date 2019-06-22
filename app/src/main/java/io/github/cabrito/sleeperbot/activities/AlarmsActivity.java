@@ -40,7 +40,7 @@ public class AlarmsActivity extends AppCompatActivity
 
         ArrayList<Alarm> alarmsList = new ArrayList<>();
         alarmsRecyclerView = (RecyclerView) findViewById(R.id.recyclerview_activity_alarms);
-        alarmsRecyclerView.setHasFixedSize(true);   /* Resizing of list layout not expected, so this saves on performance */
+        alarmsRecyclerView.setHasFixedSize(true);   // Resizing of list layout not expected, so this saves on performance
 
         // Define our layout manager
         layoutManager = new LinearLayoutManager(this);

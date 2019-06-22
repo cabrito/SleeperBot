@@ -6,22 +6,110 @@
     android:layout_height="match_parent"
     tools:context="io.github.cabrito.sleeperbot.activities.SetAlarmActivity">
 
-    <TimePicker
-        android:id="@+id/timepicker_activity_setalarm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
 
-    <Button
-        android:id="@+id/button_activity_setalarm_set"
+    <!-- TextView, clickable to bring up TimePicker dialog box -->
+    <TextView
+        android:id="@+id/textview_activity_setalarm_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/timepicker_activity_setalarm"
+        android:textSize="48sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="4:20 PM"/>
+
+    <!-- TextView, allowing the user to give the alarm a title -->
+    <EditText
+        android:id="@+id/edittext_activity_setalarm_alarmtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:hint="@string/activity_setalarm_alarmtitle"
+        android:inputType="text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textview_activity_setalarm_time"/>
+
+    <!-- Checkboxes for which days the alarm should be set -->
+    <LinearLayout
+        android:id="@+id/linearlayout_activity_setalarm_daysofweek"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/edittext_activity_setalarm_alarmtitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <CheckBox
+            android:id="@+id/checkbox_activity_setalarm_sunday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/short_sunday"
+            android:textSize="14sp"/>
+
+        <CheckBox
+            android:id="@+id/checkbox_activity_setalarm_monday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/short_monday"
+            android:textSize="14sp"/>
+
+        <CheckBox
+            android:id="@+id/checkbox_activity_setalarm_tuesday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/short_tuesday"
+            android:textSize="14sp"/>
+
+        <CheckBox
+            android:id="@+id/checkbox_activity_setalarm_wednesday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/short_wednesday"
+            android:textSize="14sp"/>
+
+        <CheckBox
+            android:id="@+id/checkbox_activity_setalarm_thursday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/short_thursday"
+            android:textSize="14sp"/>
+
+        <CheckBox
+            android:id="@+id/checkbox_activity_setalarm_friday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/short_friday"
+            android:textSize="14sp"/>
+
+        <CheckBox
+            android:id="@+id/checkbox_activity_setalarm_saturday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/short_saturday"
+            android:textSize="14sp"/>
+    </LinearLayout>
+
+    <!-- Textview, bringing up Ringtone Selection -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linearlayout_activity_setalarm_daysofweek"
+        android:textSize="18sp"
+        tools:text="Ringtone:"/>
+    <!-- RadioButton: Should volume fade? -->
+    <!-- Checkbox, should vibrate be enabled? -->
+    <!-- Spinner, what CAPTCHA should we use? (if any) -->
+    <!-- RadioButton: Should Snooze be allowed? -->
+    <!-- TEMPORARY: Button to set alarm -->
+    <Button
+        android:id="@+id/button_activity_setalarm_setalarm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:text="Click to Set Alarm"/>
+        android:text="@string/activity_alarms_button_newalarm"/>
 
 </android.support.constraint.ConstraintLayout>

@@ -2,63 +2,104 @@ package io.github.cabrito.sleeperbot.activities;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Calendar;
 
 import io.github.cabrito.sleeperbot.R;
+import io.github.cabrito.sleeperbot.fragments.TimePickerFragment;
 import io.github.cabrito.sleeperbot.util.AlarmReceiver;
 
-public class SetAlarmActivity extends AppCompatActivity
+public class SetAlarmActivity extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener
 {
-    TimePicker timePicker;
+    Calendar calendar;
+    TextView timeTv;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_alarm);
+        calendar = Calendar.getInstance();
 
-        // TODO: Cater to the user's locale if they're using AM or PM
-        Button setAlarmButton = (Button) findViewById(R.id.button_activity_setalarm_set);
-        timePicker = findViewById(R.id.timepicker_activity_setalarm);
-        timePicker.setIs24HourView(true);
+        // Work to accomplish if this is the first time the screen is being loaded.
+        if(savedInstanceState == null)
+        {
+            timeTv.setText(formatTime(calendar));
+        }
 
-        setAlarmButton.setOnClickListener(new View.OnClickListener()
+        timeTv = (TextView) findViewById(R.id.textview_activity_setalarm_time);
+        Button button = (Button) findViewById(R.id.button_activity_setalarm_setalarm);
+
+        // Set the appropriate listeners
+        button.setOnClickListener(new View.OnClickListener()
         {
             @Override
             public void onClick(View v)
             {
-                // TODO: Have a more dynamic way to set the time the alarm will go off
-                Calendar c = Calendar.getInstance();
-                byte currHour, currMinute;
-
-                // Depending on the version of Android on the device, we must access TimePicker data differently.
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                {
-                    currHour = (byte)timePicker.getHour();
-                    currMinute = (byte)timePicker.getMinute();
-                } else
-                {
-                    currHour = (byte)timePicker.getCurrentHour().intValue();
-                    currMinute = (byte)timePicker.getCurrentMinute().intValue();
-                }
-
-                // Use information from the TimePicker to set the user's alarm.
-                c.set(Calendar.HOUR_OF_DAY, currHour);
-                c.set(Calendar.MINUTE, currMinute);
-                c.set(Calendar.SECOND, 0);
-
-                startAlarm(c);
+                startAlarm(calendar);
             }
         });
+
+        timeTv.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                TimePickerFragment timePickerFragment = new TimePickerFragment();
+                timePickerFragment.show(getSupportFragmentManager(), "Time Picker Dialog");
+            }
+        });
+
+    }
+
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute)
+    {
+        // Set the calendar with the new date
+        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        calendar.set(Calendar.MINUTE, minute);
+        calendar.set(Calendar.SECOND, 0);
+
+        // Put the locale-aware text in the view
+        timeTv.setText(formatTime(calendar));
+    }
+
+    /**
+     * Used to restore information on the screen if the device encounters a change like rotation.
+     * @param outState A Bundle containing important information to restore.
+     */
+    @Override
+    protected void onSaveInstanceState(Bundle outState)
+    {
+        super.onSaveInstanceState(outState);
+        outState.putInt("hour", calendar.get(Calendar.HOUR_OF_DAY));
+        outState.putInt("minute", calendar.get(Calendar.MINUTE));
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState)
+    {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        calendar.set(Calendar.HOUR_OF_DAY, savedInstanceState.getInt("hour"));
+        calendar.set(Calendar.MINUTE, savedInstanceState.getInt("minute"));
+
+        // Put the locale-aware text in the view
+        timeTv.setText(formatTime(calendar));
     }
 
     /**
@@ -81,5 +122,15 @@ public class SetAlarmActivity extends AppCompatActivity
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
         // Debug
         Toast.makeText(this,"Alarm Started",Toast.LENGTH_LONG).show();
+    }
+
+    /**
+     * Formats the time specific to the device's locale
+     * @param c Calendar containing a specific time.
+     * @return  Formatted time as a String, such as "22:04" or "10:04 PM".
+     */
+    private String formatTime(Calendar c)
+    {
+        return DateFormat.getTimeFormat(this).format(c.getTime());
     }
 }
