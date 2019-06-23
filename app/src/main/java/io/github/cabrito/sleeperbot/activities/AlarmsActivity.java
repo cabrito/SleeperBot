@@ -9,7 +9,9 @@ import android.view.View;
 import android.widget.Button;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 import io.github.cabrito.sleeperbot.R;
@@ -55,7 +57,8 @@ public class AlarmsActivity extends AppCompatActivity
         alarmsList.add(new Alarm("Weekends-Only Alarm", 23, 15, new boolean[] {true, false, false, false, false, false, true}, false));
 
         // Set the adapter for the RecyclerView and the list of alarms.
-        alarmsAdapter = new AlarmsAdapter(alarmsList);
+        //alarmsAdapter = new AlarmsAdapter(alarmsList);
+        alarmsAdapter = new AlarmsAdapter(convertAndReconvert(alarmsList));
         alarmsRecyclerView.setAdapter(alarmsAdapter);
     }
 
@@ -64,8 +67,20 @@ public class AlarmsActivity extends AppCompatActivity
 
     }
 
-    private void displayJSON(ArrayList<Alarm> alarms)
+    /**
+     * A test function that demonstrates how to use Gson for producing a JSON array of the alarms,
+     * as well as how to make the JSON an ArrayList again.
+     * @param alarms
+     * @return
+     */
+    private ArrayList<Alarm> convertAndReconvert(ArrayList<Alarm> alarms)
     {
+        Gson gson = new Gson();
+        String jsonObject = gson.toJson(alarms);
+        System.out.println(jsonObject);
 
+        Type alarmsListType = new TypeToken<ArrayList<Alarm>>() {}.getType();
+
+        return gson.fromJson(jsonObject, alarmsListType);
     }
 }
