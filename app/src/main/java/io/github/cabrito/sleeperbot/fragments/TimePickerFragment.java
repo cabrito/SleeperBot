@@ -19,10 +19,9 @@ public class TimePickerFragment extends AppCompatDialogFragment
     {
         Context activity = getActivity();
 
-        // Used for ensuring the TimePickerDialog has the current time listed.
-        Calendar cal = Calendar.getInstance();
-        int hour = cal.get(Calendar.HOUR_OF_DAY);
-        int minute = cal.get(Calendar.MINUTE);
+        // We set hour and minute into the Bundle outside in the activities, and request them here.
+        int hour = savedInstanceState.getInt("hour");
+        int minute = savedInstanceState.getInt("minute");
 
         // Provide the user the specially crafted TimePickerDialog.
         return new TimePickerDialog(activity,
