@@ -29,7 +29,7 @@ import io.github.cabrito.sleeperbot.util.UtilTime;
 public class SetAlarmActivity extends AppCompatActivity implements  TimePickerDialog.OnTimeSetListener,
                                                                     DaysOfWeekDialog.DaysOfWeekDialogListener
 {
-    Calendar calendar;
+    Calendar timeData;
     TextView timeTextView;
     TextView daysTextView;
     EditText alarmTitleField;
@@ -51,8 +51,8 @@ public class SetAlarmActivity extends AppCompatActivity implements  TimePickerDi
         // Work to accomplish if this is the first time the screen is being loaded.
         if(savedInstanceState == null)
         {
-            calendar = Calendar.getInstance();
-            timeTextView.setText(UtilTime.formatTime(this, calendar));
+            timeData = Calendar.getInstance();
+            timeTextView.setText(UtilTime.formatTime(this, timeData));
         }
 
         // Go ahead and put the days the alarm should be activating
@@ -64,7 +64,7 @@ public class SetAlarmActivity extends AppCompatActivity implements  TimePickerDi
             @Override
             public void onClick(View v)
             {
-                setAlarm(calendar);
+                setAlarm();
             }
         });
 
@@ -74,8 +74,8 @@ public class SetAlarmActivity extends AppCompatActivity implements  TimePickerDi
             public void onClick(View v)
             {
                 Bundle timeInfo = new Bundle();
-                int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                int minute = calendar.get(Calendar.MINUTE);
+                int hour = timeData.get(Calendar.HOUR_OF_DAY);
+                int minute = timeData.get(Calendar.MINUTE);
                 timeInfo.putInt("hour", hour);
                 timeInfo.putInt("minute", minute);
                 TimePickerFragment timePickerFragment = new TimePickerFragment();
@@ -98,13 +98,13 @@ public class SetAlarmActivity extends AppCompatActivity implements  TimePickerDi
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute)
     {
-        // Set the calendar with the new date
-        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-        calendar.set(Calendar.MINUTE, minute);
-        calendar.set(Calendar.SECOND, 0);
+        // Set the timeData with the new date
+        timeData.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        timeData.set(Calendar.MINUTE, minute);
+        timeData.set(Calendar.SECOND, 0);
 
         // Put the locale-aware text in the view
-        timeTextView.setText(UtilTime.formatTime(this, calendar));
+        timeTextView.setText(UtilTime.formatTime(this, timeData));
     }
 
     @Override
@@ -123,8 +123,8 @@ public class SetAlarmActivity extends AppCompatActivity implements  TimePickerDi
     protected void onSaveInstanceState(Bundle outState)
     {
         super.onSaveInstanceState(outState);
-        outState.putInt("hour", calendar.get(Calendar.HOUR_OF_DAY));
-        outState.putInt("minute", calendar.get(Calendar.MINUTE));
+        outState.putInt("hour", timeData.get(Calendar.HOUR_OF_DAY));
+        outState.putInt("minute", timeData.get(Calendar.MINUTE));
         outState.putBooleanArray("daysActivated", daysActivated);
     }
 
@@ -133,37 +133,34 @@ public class SetAlarmActivity extends AppCompatActivity implements  TimePickerDi
     {
         super.onRestoreInstanceState(savedInstanceState);
 
-        calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY, savedInstanceState.getInt("hour"));
-        calendar.set(Calendar.MINUTE, savedInstanceState.getInt("minute"));
+        timeData = Calendar.getInstance();
+        timeData.set(Calendar.HOUR_OF_DAY, savedInstanceState.getInt("hour"));
+        timeData.set(Calendar.MINUTE, savedInstanceState.getInt("minute"));
         daysActivated = savedInstanceState.getBooleanArray("daysActivated");
 
         // Put the locale-aware text in the views
-        timeTextView.setText(UtilTime.formatTime(this, calendar));
+        timeTextView.setText(UtilTime.formatTime(this, timeData));
         daysTextView.setText(UtilTime.daysActivated(this, daysActivated));
 
     }
 
     /**
      * Asks the Android AlarmManager to start the DismissAlarm activity at the specified time.
-     * @param c A Calendar object containing specific time information for the alarm.
      */
-    private void setAlarm(Calendar c)
+    private void setAlarm()
     {
         // If the user didn't choose a day to set the alarm for, then just do it for the next day.
         if (UtilTime.isNoDaySet(daysActivated))
         {
             // If the desired time is before now, assume the user wants the alarm tomorrow.
-            if (c.before(Calendar.getInstance()))
-            {
-                c.add(Calendar.DATE, 1);
-            }
+            if (timeData.before(Calendar.getInstance()))
+                timeData.add(Calendar.DATE, 1);
 
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             Intent intent = new Intent(this, AlarmReceiver.class);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 100, intent, 0);
 
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, timeData.getTimeInMillis(), pendingIntent);
         } else
         {
             // Put some PendingIntents for each day of the week that the alarm should fire.
@@ -171,7 +168,7 @@ public class SetAlarmActivity extends AppCompatActivity implements  TimePickerDi
             {
                 if (daysActivated[i])
                 {
-                    scheduleAlarms(i);
+                    scheduleRepeatingAlarm(i + 1);
                 }
             }
         }
@@ -180,7 +177,7 @@ public class SetAlarmActivity extends AppCompatActivity implements  TimePickerDi
         Gson gson = new Gson();
         Alarm alarm = new Alarm(
                 alarmTitleField.getText().toString(),
-                c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE),
+                timeData.get(Calendar.HOUR_OF_DAY), timeData.get(Calendar.MINUTE),
                 daysActivated,
                 true);
         SharedPreferences alarmsPreferences = getSharedPreferences(
@@ -196,22 +193,21 @@ public class SetAlarmActivity extends AppCompatActivity implements  TimePickerDi
      * Helper function for scheduling repeating alarms
      * @param dayOfWeek
      */
-    private void scheduleAlarms(int dayOfWeek)
+    private void scheduleRepeatingAlarm(int dayOfWeek)
     {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(this, AlarmReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 100, intent, 0);
 
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.DAY_OF_WEEK, dayOfWeek);
+        timeData.set(Calendar.DAY_OF_WEEK, dayOfWeek);
 
         // If the alarm is scheduled to be before now, place a PendingIntent a week into the future
-        if (c.before(Calendar.getInstance()))
-            c.add(Calendar.DAY_OF_YEAR, UtilTime.NUMBER_OF_DAYS_OF_WEEK);
+        if (timeData.before(Calendar.getInstance()))
+            timeData.add(Calendar.DAY_OF_YEAR, UtilTime.NUMBER_OF_DAYS_OF_WEEK);
 
         alarmManager.setRepeating(
                 AlarmManager.RTC_WAKEUP,
-                c.getTimeInMillis(),
+                timeData.getTimeInMillis(),
                 AlarmManager.INTERVAL_DAY * UtilTime.NUMBER_OF_DAYS_OF_WEEK,
                 pendingIntent);
 
