@@ -1,5 +1,6 @@
 package io.github.cabrito.sleeperbot.adapters;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,9 +12,11 @@ import android.widget.TextView;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import io.github.cabrito.sleeperbot.R;
 import io.github.cabrito.sleeperbot.util.Alarm;
+import io.github.cabrito.sleeperbot.util.UtilTime;
 
 public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.AlarmsViewHolder>
 {
@@ -58,8 +61,10 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.AlarmsView
     {
         Alarm currAlarm = alarmsList.get(position);
         alarmsViewHolder.alarmTitle.setText(currAlarm.getTitle());
-        alarmsViewHolder.alarmTime.setText(buildAlarmTime(currAlarm));
-        alarmsViewHolder.daysActivated.setText(buildDaysActivated(currAlarm));
+        alarmsViewHolder.alarmTime.setText(
+                UtilTime.formatTime(alarmsViewHolder.itemView.getContext(), getCalendar(currAlarm)));
+        alarmsViewHolder.daysActivated.setText(
+                UtilTime.daysActivated(alarmsViewHolder.itemView.getContext(), currAlarm.getDays()));
         alarmsViewHolder.alarmSwitch.setChecked(currAlarm.isEnabled());
     }
 
@@ -69,49 +74,15 @@ public class AlarmsAdapter extends RecyclerView.Adapter<AlarmsAdapter.AlarmsView
         return alarmsList.size();
     }
 
-    /**
-     * Formats the time in the Alarm Card to be human-readable.
-     * @return String such as 17:30 or 8:50 AM, depending on user's locale.
-     */
-    private String buildAlarmTime(Alarm alarm)
+    private Calendar getCalendar(Alarm alarm)
     {
-        NumberFormat formatter = new DecimalFormat("00");
-        String result = alarm.getHour() + ":" + formatter.format(alarm.getMinute());
-        // TODO: Add logic that accounts for locales
-        return result;
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, alarm.getHour());
+        c.set(Calendar.MINUTE, alarm.getMinute());
+        c.set(Calendar.SECOND, 0);
+
+        return c;
     }
 
-    /**
-     * Provides concise, human-readable representation of the days of the week the alarm should fire.
-     * @return String with specific short day names, or "Weekdays"/"Weekends" if applicable.
-     */
-    private String buildDaysActivated(Alarm alarm)
-    {
-        // Check to see if the alarm is weekdays only, weekends only, or variable
-        if (alarm.isWeekdaysOnly())
-            return "Weekdays";
-        else if (alarm.isWeekendsOnly())
-            return "Weekends";
-        else
-        {
-            // TODO: Avoid hard-coding the language here.
-            String[] daysOfWeek = new String[] {
-                    "Sun",
-                    "Mon",
-                    "Tue",
-                    "Wed",
-                    "Thu",
-                    "Fri",
-                    "Sat"};
-            StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < daysOfWeek.length; i++)
-            {
-                if (alarm.getDays()[i])
-                {
-                    sb.append(daysOfWeek[i]).append(" ");
-                }
-            }
-            return sb.toString();
-        }
-    }
+
 }
