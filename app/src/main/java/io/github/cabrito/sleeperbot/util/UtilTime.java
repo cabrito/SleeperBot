@@ -49,7 +49,7 @@ public class UtilTime
         return DateFormat.getTimeFormat(context).format(c.getTime());
     }
 
-    private static boolean isWeekendsOnly(boolean[] daysArray)
+    private static boolean isWeekdaysOnly(boolean[] daysArray)
     {
         // If either Sun or Sat are activated, it's not weekdays only
         if (daysArray[0] || daysArray[NUMBER_OF_DAYS_OF_WEEK - 1])
@@ -66,7 +66,7 @@ public class UtilTime
         return true;
     }
 
-    private static boolean isWeekdaysOnly(boolean[] daysArray)
+    private static boolean isWeekendsOnly(boolean[] daysArray)
     {
         // If neither Sun nor Sat are activated, it's not weekends only.
         if (!daysArray[0] || !daysArray[NUMBER_OF_DAYS_OF_WEEK - 1])

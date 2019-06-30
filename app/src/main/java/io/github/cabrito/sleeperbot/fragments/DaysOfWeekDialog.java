@@ -22,6 +22,7 @@ public class DaysOfWeekDialog extends AppCompatDialogFragment
                         friday,
                         saturday;
     private DaysOfWeekDialogListener listener;
+    private boolean[] days;
     private final int NUMBER_OF_DAYS_IN_WEEK = 7;
 
     @Override
@@ -33,13 +34,16 @@ public class DaysOfWeekDialog extends AppCompatDialogFragment
         View view = layoutInflater.inflate(R.layout.layout_dialog_daysofweek, null);
 
         // Find all the checkboxes
-        sunday = view.findViewById(R.id.checkbox_dialog_daysofweek_sunday);
-        monday = view.findViewById(R.id.checkbox_dialog_daysofweek_monday);
-        tuesday = view.findViewById(R.id.checkbox_dialog_daysofweek_tuesday);
-        wednesday = view.findViewById(R.id.checkbox_dialog_daysofweek_wednesday);
-        thursday = view.findViewById(R.id.checkbox_dialog_daysofweek_thursday);
-        friday = view.findViewById(R.id.checkbox_dialog_daysofweek_friday);
-        saturday = view.findViewById(R.id.checkbox_dialog_daysofweek_saturday);
+        sunday      = view.findViewById(R.id.checkbox_dialog_daysofweek_sunday);
+        monday      = view.findViewById(R.id.checkbox_dialog_daysofweek_monday);
+        tuesday     = view.findViewById(R.id.checkbox_dialog_daysofweek_tuesday);
+        wednesday   = view.findViewById(R.id.checkbox_dialog_daysofweek_wednesday);
+        thursday    = view.findViewById(R.id.checkbox_dialog_daysofweek_thursday);
+        friday      = view.findViewById(R.id.checkbox_dialog_daysofweek_friday);
+        saturday    = view.findViewById(R.id.checkbox_dialog_daysofweek_saturday);
+
+        days = getArguments().getBooleanArray("daysActivated");
+        initCheckboxes(days);
 
         builder.setView(view)
                 .setTitle(R.string.dialog_set_daysofweek_title)
@@ -48,8 +52,6 @@ public class DaysOfWeekDialog extends AppCompatDialogFragment
                     @Override
                     public void onClick(DialogInterface dialog, int which)
                     {
-                        boolean[] days = new boolean[NUMBER_OF_DAYS_IN_WEEK];
-
                         days[0] = sunday.isChecked();
                         days[1] = monday.isChecked();
                         days[2] = tuesday.isChecked();
@@ -83,6 +85,20 @@ public class DaysOfWeekDialog extends AppCompatDialogFragment
         } catch (ClassCastException e)
         {
             throw new ClassCastException(context.toString() + " needs to implement DaysOfWeekDialogListener.");
+        }
+    }
+
+    private void initCheckboxes(boolean[] daysActivated)
+    {
+        if (daysActivated != null)
+        {
+            sunday.setChecked(daysActivated[0]);
+            monday.setChecked(daysActivated[1]);
+            tuesday.setChecked(daysActivated[2]);
+            wednesday.setChecked(daysActivated[3]);
+            thursday.setChecked(daysActivated[4]);
+            friday.setChecked(daysActivated[5]);
+            saturday.setChecked(daysActivated[6]);
         }
     }
 

@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,6 +24,7 @@ import io.github.cabrito.sleeperbot.fragments.DaysOfWeekDialog;
 import io.github.cabrito.sleeperbot.fragments.TimePickerFragment;
 import io.github.cabrito.sleeperbot.util.Alarm;
 import io.github.cabrito.sleeperbot.util.AlarmReceiver;
+import io.github.cabrito.sleeperbot.util.UtilTime;
 
 public class SetAlarmActivity extends AppCompatActivity implements  TimePickerDialog.OnTimeSetListener,
                                                                     DaysOfWeekDialog.DaysOfWeekDialogListener
@@ -33,7 +33,7 @@ public class SetAlarmActivity extends AppCompatActivity implements  TimePickerDi
     TextView timeTextView;
     TextView daysTextView;
     EditText alarmTitleField;
-    boolean[] daysSet;
+    boolean[] daysActivated;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -41,6 +41,7 @@ public class SetAlarmActivity extends AppCompatActivity implements  TimePickerDi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_alarm);
 
+        // TODO: Reuse this screen for existing alarms by grabbing an Intent with args
         timeTextView = (TextView) findViewById(R.id.textview_activity_setalarm_time);
         daysTextView = (TextView) findViewById(R.id.textview_activity_setalarm_daysofweek);
         alarmTitleField = (EditText) findViewById(R.id.edittext_activity_setalarm_alarmtitle);
@@ -51,12 +52,11 @@ public class SetAlarmActivity extends AppCompatActivity implements  TimePickerDi
         if(savedInstanceState == null)
         {
             calendar = Calendar.getInstance();
-            timeTextView.setText(formatTime(calendar));
+            timeTextView.setText(UtilTime.formatTime(this, calendar));
         }
 
-        // TODO: Make method to detect if all days are false
-        if (isNoDaySet(daysSet))
-            daysTextView.setText(R.string.activity_setalarm_none);
+        // Go ahead and put the days the alarm should be activating
+        daysTextView.setText(UtilTime.daysActivated(this, daysActivated));
 
         // Set the appropriate listeners
         button.setOnClickListener(new View.OnClickListener()
@@ -104,7 +104,14 @@ public class SetAlarmActivity extends AppCompatActivity implements  TimePickerDi
         calendar.set(Calendar.SECOND, 0);
 
         // Put the locale-aware text in the view
-        timeTextView.setText(formatTime(calendar));
+        timeTextView.setText(UtilTime.formatTime(this, calendar));
+    }
+
+    @Override
+    public void checkDays(boolean[] daysOfWeek)
+    {
+        this.daysActivated = daysOfWeek;
+        daysTextView.setText(UtilTime.daysActivated(this, daysActivated));
     }
 
     // NOTE: Android calls onCreate(), onSaveInstanceState(), and onRestoreInstanceState() in that order!
@@ -118,6 +125,7 @@ public class SetAlarmActivity extends AppCompatActivity implements  TimePickerDi
         super.onSaveInstanceState(outState);
         outState.putInt("hour", calendar.get(Calendar.HOUR_OF_DAY));
         outState.putInt("minute", calendar.get(Calendar.MINUTE));
+        outState.putBooleanArray("daysActivated", daysActivated);
     }
 
     @Override
@@ -128,12 +136,12 @@ public class SetAlarmActivity extends AppCompatActivity implements  TimePickerDi
         calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, savedInstanceState.getInt("hour"));
         calendar.set(Calendar.MINUTE, savedInstanceState.getInt("minute"));
+        daysActivated = savedInstanceState.getBooleanArray("daysActivated");
 
-        // Put the locale-aware text in the view
-        timeTextView.setText(formatTime(calendar));
+        // Put the locale-aware text in the views
+        timeTextView.setText(UtilTime.formatTime(this, calendar));
+        daysTextView.setText(UtilTime.daysActivated(this, daysActivated));
 
-        // TODO: URGENT!!! Rotation does not preserve the days set.
-        formatDaysText();
     }
 
     /**
@@ -157,7 +165,7 @@ public class SetAlarmActivity extends AppCompatActivity implements  TimePickerDi
         Alarm alarm = new Alarm(
                 alarmTitleField.getText().toString(),
                 c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE),
-                daysSet,
+                daysActivated,
                 true);
 
         SharedPreferences alarmsPreferences = getSharedPreferences(
@@ -174,67 +182,15 @@ public class SetAlarmActivity extends AppCompatActivity implements  TimePickerDi
         finish();
     }
 
-    /**
-     * Formats the time specific to the device's locale
-     * @param c Calendar containing a specific time.
-     * @return  Formatted time as a String, such as "22:04" or "10:04 PM".
-     */
-    private String formatTime(Calendar c)
-    {
-        return DateFormat.getTimeFormat(this).format(c.getTime());
-    }
-
     private void openDaysOfWeekDialog()
     {
+        Bundle args = new Bundle();
+        if (daysActivated != null)
+            args.putBooleanArray("daysActivated", daysActivated);
+        else
+            args.putBooleanArray("daysActivated", new boolean[7]);
         DaysOfWeekDialog dialog = new DaysOfWeekDialog();
+        dialog.setArguments(args);
         dialog.show(getSupportFragmentManager(), "Days of Week Dialog");
-    }
-
-    @Override
-    public void checkDays(boolean[] daysOfWeek)
-    {
-        this.daysSet = daysOfWeek;
-        formatDaysText();
-    }
-
-    private void formatDaysText()
-    {
-        if (daysSet == null)
-        {
-            daysTextView.setText(R.string.activity_setalarm_none);
-            return;
-        }
-
-        // TODO: Avoid hard-coding the language here.
-        String[] daysOfWeek = new String[]{
-                "Sun",
-                "Mon",
-                "Tue",
-                "Wed",
-                "Thu",
-                "Fri",
-                "Sat"};
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < daysOfWeek.length; i++)
-        {
-            if (daysSet[i])
-            {
-                sb.append(daysOfWeek[i]).append(" ");
-            }
-        }
-        daysTextView.setText(sb.toString());
-    }
-
-    private boolean isNoDaySet(boolean[] days)
-    {
-        if (days == null)
-            return true;
-
-        for (boolean b : days)
-        {
-            if (b)
-                return false;
-        }
-        return true;
     }
 }
