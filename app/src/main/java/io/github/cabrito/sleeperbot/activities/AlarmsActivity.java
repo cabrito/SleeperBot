@@ -64,7 +64,7 @@ public class AlarmsActivity extends AppCompatActivity
         alarmsRecyclerView.setAdapter(alarmsAdapter);
     }
 
-    private void setAlarm()
+    private void toggleAlarm()
     {
 
     }

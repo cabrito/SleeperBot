@@ -6,6 +6,7 @@
 
     <!-- SetAlarmActivity -->
     <string name="activity_setalarm_alarmtitle">Alarm Title</string>
+    <string name="activity_setalarm_none">None</string>
 
     <string name="short_sunday">Sun</string>
     <string name="short_monday">Mon</string>
@@ -14,4 +15,10 @@
     <string name="short_thursday">Thu</string>
     <string name="short_friday">Fri</string>
     <string name="short_saturday">Sat</string>
+
+    <!-- Dialog Fragments -->
+    <string name="dialog_set_daysofweek_title">Set Alarm Days</string>
+    <string name="dialog_set_daysofweek_positive">OK</string>
+    <string name="dialog_set_daysofweek_negative">Cancel</string>
+
 </resources>
