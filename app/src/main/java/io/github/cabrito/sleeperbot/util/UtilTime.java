@@ -9,7 +9,8 @@ import io.github.cabrito.sleeperbot.R;
 
 public class UtilTime
 {
-    private static final int NUMBER_OF_DAYS_OF_WEEK = 7;
+    // Constants
+    public static final int NUMBER_OF_DAYS_OF_WEEK = 7;
 
     public static String daysActivated(Context context, boolean[] daysArray)
     {
@@ -83,7 +84,7 @@ public class UtilTime
         return true;
     }
 
-    private static boolean isNoDaySet(boolean[] daysArray)
+    public static boolean isNoDaySet(boolean[] daysArray)
     {
         if (daysArray == null)
             return true;

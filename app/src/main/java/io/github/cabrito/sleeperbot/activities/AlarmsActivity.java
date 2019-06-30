@@ -53,12 +53,6 @@ public class AlarmsActivity extends AppCompatActivity
         layoutManager = new LinearLayoutManager(this);
         alarmsRecyclerView.setLayoutManager(layoutManager);
 
-        // Make some fake alarms
-        /*alarmsList.add(new Alarm("My First Alarm", 3, 30, new boolean[] {false, true, false, false, false, false, false}, true));
-        alarmsList.add(new Alarm("My Second Alarm", 4, 20, new boolean[] {true, false, true, false, true, false, true}, false));
-        alarmsList.add(new Alarm("Weekdays-Only Alarm", 5, 0, new boolean[] {false, true, true, true, true, true, false}, false));
-        alarmsList.add(new Alarm("Weekends-Only Alarm", 23, 15, new boolean[] {true, false, false, false, false, false, true}, false));*/
-
         // Set the adapter for the RecyclerView and the list of alarms.
         alarmsAdapter = new AlarmsAdapter(alarmsList);
         alarmsRecyclerView.setAdapter(alarmsAdapter);

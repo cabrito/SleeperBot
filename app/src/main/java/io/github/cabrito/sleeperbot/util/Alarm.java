@@ -12,8 +12,6 @@ public class Alarm
     private byte minute;
     private boolean[] days;
     private boolean enabled;
-    // Constants
-    // private final int NUMBER_OF_DAYS_OF_WEEK = 7;
 
     public Alarm(String title, int hour, int minute, boolean[] days, boolean enabled)
     {

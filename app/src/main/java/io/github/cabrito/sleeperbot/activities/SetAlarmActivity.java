@@ -64,7 +64,7 @@ public class SetAlarmActivity extends AppCompatActivity implements  TimePickerDi
             @Override
             public void onClick(View v)
             {
-                startAlarm(calendar);
+                setAlarm(calendar);
             }
         });
 
@@ -148,38 +148,75 @@ public class SetAlarmActivity extends AppCompatActivity implements  TimePickerDi
      * Asks the Android AlarmManager to start the DismissAlarm activity at the specified time.
      * @param c A Calendar object containing specific time information for the alarm.
      */
-    private void startAlarm(Calendar c)
+    private void setAlarm(Calendar c)
     {
-        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(this, AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 100, intent, 0);
-
-        // If the desired time is before now, assume the user wants the alarm tomorrow.
-        if (c.before(Calendar.getInstance()))
+        // If the user didn't choose a day to set the alarm for, then just do it for the next day.
+        if (UtilTime.isNoDaySet(daysActivated))
         {
-            c.add(Calendar.DATE, 1);
+            // If the desired time is before now, assume the user wants the alarm tomorrow.
+            if (c.before(Calendar.getInstance()))
+            {
+                c.add(Calendar.DATE, 1);
+            }
+
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            Intent intent = new Intent(this, AlarmReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 100, intent, 0);
+
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
+        } else
+        {
+            // Put some PendingIntents for each day of the week that the alarm should fire.
+            for (int i = 0; i < daysActivated.length; i++)
+            {
+                if (daysActivated[i])
+                {
+                    scheduleAlarms(i);
+                }
+            }
         }
 
-        // Place this alarm in the preferences
+        // Place the main Alarm data in the preferences for later
         Gson gson = new Gson();
         Alarm alarm = new Alarm(
                 alarmTitleField.getText().toString(),
                 c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE),
                 daysActivated,
                 true);
-
         SharedPreferences alarmsPreferences = getSharedPreferences(
                 getString(R.string.alarms_filename), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = alarmsPreferences.edit();
-        editor.putString(String.valueOf(System.currentTimeMillis()), gson.toJson(alarm));
+        editor.putString(String.valueOf(alarm.getId()), gson.toJson(alarm));
         editor.apply();
 
-        // Lastly, actually set the alarm manager
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
+        finish();
+    }
+
+    /**
+     * Helper function for scheduling repeating alarms
+     * @param dayOfWeek
+     */
+    private void scheduleAlarms(int dayOfWeek)
+    {
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlarmReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 100, intent, 0);
+
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.DAY_OF_WEEK, dayOfWeek);
+
+        // If the alarm is scheduled to be before now, place a PendingIntent a week into the future
+        if (c.before(Calendar.getInstance()))
+            c.add(Calendar.DAY_OF_YEAR, UtilTime.NUMBER_OF_DAYS_OF_WEEK);
+
+        alarmManager.setRepeating(
+                AlarmManager.RTC_WAKEUP,
+                c.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY * UtilTime.NUMBER_OF_DAYS_OF_WEEK,
+                pendingIntent);
+
         // Debug
         Toast.makeText(this, "Alarm Started", Toast.LENGTH_LONG).show();
-        // TODO: Bring us back to the alarms list with the updated list
-        finish();
     }
 
     private void openDaysOfWeekDialog()
@@ -188,7 +225,7 @@ public class SetAlarmActivity extends AppCompatActivity implements  TimePickerDi
         if (daysActivated != null)
             args.putBooleanArray("daysActivated", daysActivated);
         else
-            args.putBooleanArray("daysActivated", new boolean[7]);
+            args.putBooleanArray("daysActivated", new boolean[UtilTime.NUMBER_OF_DAYS_OF_WEEK]);
         DaysOfWeekDialog dialog = new DaysOfWeekDialog();
         dialog.setArguments(args);
         dialog.show(getSupportFragmentManager(), "Days of Week Dialog");
