@@ -26,7 +26,8 @@ import io.github.cabrito.sleeperbot.fragments.TimePickerFragment;
 import io.github.cabrito.sleeperbot.util.Alarm;
 import io.github.cabrito.sleeperbot.util.AlarmReceiver;
 
-public class SetAlarmActivity extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener, DaysOfWeekDialog.DaysOfWeekDialogListener
+public class SetAlarmActivity extends AppCompatActivity implements  TimePickerDialog.OnTimeSetListener,
+                                                                    DaysOfWeekDialog.DaysOfWeekDialogListener
 {
     Calendar calendar;
     TextView timeTextView;
@@ -54,7 +55,7 @@ public class SetAlarmActivity extends AppCompatActivity implements TimePickerDia
         }
 
         // TODO: Make method to detect if all days are false
-        if (areNoDaysSet(daysSet))
+        if (isNoDaySet(daysSet))
             daysTextView.setText(R.string.activity_setalarm_none);
 
         // Set the appropriate listeners
@@ -130,6 +131,8 @@ public class SetAlarmActivity extends AppCompatActivity implements TimePickerDia
 
         // Put the locale-aware text in the view
         timeTextView.setText(formatTime(calendar));
+
+        // TODO: URGENT!!! Rotation does not preserve the days set.
         formatDaysText();
     }
 
@@ -196,6 +199,12 @@ public class SetAlarmActivity extends AppCompatActivity implements TimePickerDia
 
     private void formatDaysText()
     {
+        if (daysSet == null)
+        {
+            daysTextView.setText(R.string.activity_setalarm_none);
+            return;
+        }
+
         // TODO: Avoid hard-coding the language here.
         String[] daysOfWeek = new String[]{
                 "Sun",
@@ -216,7 +225,7 @@ public class SetAlarmActivity extends AppCompatActivity implements TimePickerDia
         daysTextView.setText(sb.toString());
     }
 
-    private boolean areNoDaysSet(boolean[] days)
+    private boolean isNoDaySet(boolean[] days)
     {
         if (days == null)
             return true;
