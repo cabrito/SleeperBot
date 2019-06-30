@@ -168,6 +168,7 @@ public class SetAlarmActivity extends AppCompatActivity implements  TimePickerDi
             {
                 if (daysActivated[i])
                 {
+                    // We need + 1 here because the calendar uses 1 - 7, rather than 0 - 6.
                     scheduleRepeatingAlarm(i + 1);
                 }
             }

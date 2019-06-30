@@ -33,7 +33,7 @@ public class DismissAlarmActivity extends AppCompatActivity
             @Override
             public void onClick(View v)
             {
-                cancelAlarm();
+                // cancelAlarm(); TODO: Is "fake" cancelling the alarm the best route to go? Or should we reschedule the alarm?
                 // Return to the main activity
                 Intent mainActivityIntent = new Intent(getBaseContext(), AlarmsActivity.class);
                 startActivity(mainActivityIntent);
@@ -64,5 +64,6 @@ public class DismissAlarmActivity extends AppCompatActivity
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 100, dismissAlarmIntent, 0);
 
         alarmManager.cancel(pendingIntent);
+
     }
 }
