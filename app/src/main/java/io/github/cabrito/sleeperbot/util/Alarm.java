@@ -5,6 +5,7 @@ package io.github.cabrito.sleeperbot.util;
  */
 public class Alarm
 {
+    // Members
     private String title;
     private byte hour;
     private byte minute;

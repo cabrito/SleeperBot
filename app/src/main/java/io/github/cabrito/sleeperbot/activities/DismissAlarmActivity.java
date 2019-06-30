@@ -61,7 +61,7 @@ public class DismissAlarmActivity extends AppCompatActivity
         // TODO: Are we sure that the alarm we cancel is ours?
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         Intent dismissAlarmIntent = new Intent(this, AlarmReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, dismissAlarmIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 100, dismissAlarmIntent, 0);
 
         alarmManager.cancel(pendingIntent);
     }
